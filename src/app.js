@@ -24,6 +24,7 @@ app.use(express.urlencoded({
 require('./api/v1/dbs/init.mongodb')
 
 app.use('/api/v1', require('./api/v1/routes'))
+app.use('/api/v2', require('./api/v2/routes'))
 
 app.use((req, res, next) => {
   next(new NotFoundError())
