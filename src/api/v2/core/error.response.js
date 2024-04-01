@@ -21,7 +21,14 @@ class NotFoundError extends ErrorResponse {
   }
 }
 
+class BadRequestError extends ErrorResponse {
+  constructor( message = ReasonStatusCode.BAD_REQUEST, statusCode = StatusCode.BAD_REQUEST ) {
+    super(message, statusCode)
+  }
+}
+
 module.exports = {
   ConflictRequestError,
-  NotFoundError
+  NotFoundError,
+  BadRequestError
 }
