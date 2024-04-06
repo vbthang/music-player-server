@@ -24,6 +24,13 @@ class UserController {
             metadata: await UserService.updateFavoriteSong(req.body)
         }).send(res)
     }
+
+    sendMail = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Send mail successfully',
+            metadata: await UserService.sendMail(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new UserController()

@@ -1,39 +1,33 @@
-'use strict'
-const { 
-	getUserByEmail
-} = require('../models/repo/user.repo')
+'use strict';
 
-const {
-    NotFoundError,
-    BadRequestError
-} = require('../core/error.response');
+const { getUserByEmail } = require('../models/repo/user.repo');
+const { NotFoundError, BadRequestError } = require('../core/error.response');
 const userModel = require('../models/user.model');
+const nodemailer = require('nodemailer');
 
 class SongService {
+    static login = async ({ email, password }) => {
+        const foundUser = await getUserByEmail({ email });
 
-	static login = async ({ email, password }) => {
-		const foundUser = await getUserByEmail({ email })
+        if (!foundUser) throw new NotFoundError('Do not find user');
 
-        if(!foundUser) throw new NotFoundError('Do not find user')
+        if (password !== foundUser.password) throw new BadRequestError('Wrong password');
 
-        if(password !== foundUser.password) throw new BadRequestError('Wrong password')
-		
-		const payload = {
+        const payload = {
             email: email,
             name: foundUser.name,
             playlists: foundUser.playlists
-        }
+        };
 
-		return payload
-	}
+        return payload;
+    };
 
-    static register = async({ name, email, password }) => {
-        const index = await userModel.countDocuments()
+    static register = async ({ name, email, password }) => {
+        const index = await userModel.countDocuments();
 
-        const foundUser = await getUserByEmail({ email })
-        console.log(foundUser);
+        const foundUser = await getUserByEmail({ email });
 
-        if(foundUser) throw new BadRequestError('User has already exits')
+        if (foundUser) throw new BadRequestError('User has already exits');
 
         userModel.create({
             id: "User" + index,
@@ -41,27 +35,24 @@ class SongService {
             email: email,
             password: password,
             playlists: []
-        })
-
+        });
 
         return {
             email: email,
             name: name,
             playlists: [],
-        }
-    }
+        };
+    };
 
-    static updateFavoriteSong = async({ email, songId, action }) => {
+    static updateFavoriteSong = async ({ email, songId, action }) => {
         const foundUser = await getUserByEmail({ email });
-    
+
         if (!foundUser) {
             throw new NotFoundError('User not found');
         }
-    
+
         if (action === "add") {
-            // Kiểm tra xem bài hát đã tồn tại trong danh sách yêu thích hay chưa
             if (!foundUser.playlists.includes(songId)) {
-                // Nếu chưa tồn tại, thêm bài hát vào danh sách yêu thích
                 foundUser.playlists.push(songId);
             }
         } else if (action === "remove") {
@@ -69,19 +60,55 @@ class SongService {
         } else {
             throw new BadRequestError('Invalid action');
         }
-    
+
         await userModel.findOneAndUpdate(
             { email: email },
             { playlists: foundUser.playlists },
             { new: true }
         );
-    
+
         return {
             email: email,
             name: foundUser.name,
             playlists: foundUser.playlists
         };
-    }    
+    };
+
+    static sendMail = async ({ email, code }) => {
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: 'vbthang1682003@gmail.com',
+                pass: 'nzkr ofnk bnsv jmvd'
+            }
+        });
+
+        // Tạo thông điệp email
+        const message = `
+            Xin chào,
+
+            Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Dưới đây là mã xác nhận để đặt lại mật khẩu:
+
+            Mã xác nhận: ${code}
+
+            Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.
+
+            Trân trọng,
+            Đội ngũ hỗ trợ của chúng tôi
+        `;
+
+        await transporter.sendMail({
+            from: 'SOULSOUND <vbthang1682003@gmail.com>',
+            to: email,
+            subject: "FORGOT PASSWORD",
+            text: message,
+        });
+
+        return 'Email sent successfully';
+    };
 }
 
-module.exports = SongService
+module.exports = SongService;
