@@ -6,6 +6,18 @@ const userModel = require('../models/user.model');
 const nodemailer = require('nodemailer');
 
 class UserService {
+    static getAll = async() => {
+        const res = await userModel.find()
+
+        const payload = res.map(user => ({
+            email: user.email,
+            name: user.name,
+            playlists: user.playlists
+        }));
+
+        return payload;
+    }
+
     static login = async ({ email, password }) => {
         const foundUser = await getUserByEmail({ email });
 
@@ -130,6 +142,11 @@ class UserService {
             name: foundUser.name,
             playlists: foundUser.playlists
         };
+    }
+    static emailExist = async ({ email }) => {
+        const foundUser = await getUserByEmail({ email });
+        console.log('HE');
+        return foundUser ? true : false;
     }
 }
 
