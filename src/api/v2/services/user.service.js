@@ -5,7 +5,7 @@ const { NotFoundError, BadRequestError } = require('../core/error.response');
 const userModel = require('../models/user.model');
 const nodemailer = require('nodemailer');
 
-class SongService {
+class UserService {
     static login = async ({ email, password }) => {
         const foundUser = await getUserByEmail({ email });
 
@@ -109,6 +109,28 @@ class SongService {
 
         return 'Email sent successfully';
     };
+
+    static updatePassword = async ({ email, password }) => {
+        const foundUser = await getUserByEmail({ email });
+
+        if (!foundUser) {
+            throw new NotFoundError('User not found');
+        }
+
+        foundUser.password = password;
+
+        await userModel.findOneAndUpdate(
+            { email: email },
+            { password: password },
+            { new: true }
+        );
+
+        return {
+            email: email,
+            name: foundUser.name,
+            playlists: foundUser.playlists
+        };
+    }
 }
 
-module.exports = SongService;
+module.exports = UserService;

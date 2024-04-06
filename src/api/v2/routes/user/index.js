@@ -9,5 +9,6 @@ router.post('/login', asyncHandler(UserController.login))
 router.post('/register', asyncHandler(UserController.register))
 router.post('/update', asyncHandler(UserController.updateFavoriteSong))
 router.post('/fwps', asyncHandler(UserController.sendMail))
+router.post('/updatepw', asyncHandler(UserController.updatePassword))
 
 module.exports = router

@@ -31,6 +31,13 @@ class UserController {
             metadata: await UserService.sendMail(req.body)
         }).send(res)
     }
+
+    updatePassword = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Update password successfully',
+            metadata: await UserService.updatePassword(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new UserController()
