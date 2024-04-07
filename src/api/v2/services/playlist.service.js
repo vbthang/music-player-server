@@ -10,6 +10,13 @@ class PlaylistService {
         const playlists = await findAllPlaylistAdmin()
         return playlists
     }
+
+    static getDiscover = async () => {
+        const playlists = await findAllPlaylistAdmin()
+        const playlistIDs = playlists.map(playlist => playlist.playlist_id)
+    
+        return playlistIDs
+    }
 }
 
 module.exports = PlaylistService

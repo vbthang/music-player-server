@@ -10,6 +10,13 @@ class CategoryController {
             metadata: await CategoryService.getAllCategories()
         }).send(res)
     }
+
+    addCategory = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Get all categories successfully!',
+            metadata: await CategoryService.addCategory(req.body)
+        }).send(res)
+    }
 }
 
 module.exports = new CategoryController()

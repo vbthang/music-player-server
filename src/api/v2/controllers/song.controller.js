@@ -10,6 +10,13 @@ class SongController {
             metadata: await SongService.getAllSongs()
         }).send(res)
     }
+    
+    getHitSong = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Get getHitSong successfully!',
+            metadata: await SongService.getHitSong()
+        }).send(res)
+    }
 }
 
 module.exports = new SongController()
