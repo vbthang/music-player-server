@@ -30,7 +30,7 @@ class SongService {
 	static getHitSong = async () => {
 		const songs = await findAllSongs()
 		const songIDs = songs.map(song => song.song_id)
-		return songIDs.slice(0, 18)
+		return songIDs.slice(0, 12)
 	}
 }
 

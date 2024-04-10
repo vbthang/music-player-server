@@ -82,8 +82,15 @@ const findPlaylistById = async ({ id }) => {
 	})
 }
 
+const findPlaylistsByIds = async (playlistIds) => {
+	return await playlistModel.find({
+		playlist_id: { $in: playlistIds }
+	})
+}
+
 module.exports = {
 	findAllPlaylistAdmin,
 	findPlaylistByUserId,
 	findPlaylistById,
+	findPlaylistsByIds,
 }

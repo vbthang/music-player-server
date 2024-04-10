@@ -21,7 +21,7 @@ class PlaylistController {
     getTop100 = async (req, res, next) => {
         new SuccessResponse({
             message: 'Get top 100 playlist successfully!',
-            metadata: await PlaylistService.getDiscover()
+            metadata: await PlaylistService.getTop100()
         }).send(res)
     }
 }
